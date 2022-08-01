@@ -56,3 +56,4 @@
 "./Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_ucpd.o"
 "./Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_usb.o"
 "./Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_utils.o"
+"./LIB_LED/lib_led.o"

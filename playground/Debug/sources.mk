@@ -24,4 +24,5 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/STM32L5xx_HAL_Driver/Src \
+LIB_LED \
 

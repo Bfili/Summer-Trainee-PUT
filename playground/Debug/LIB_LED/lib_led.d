@@ -1,4 +1,7 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
+LIB_LED/lib_led.o: \
+ C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_LED/lib_led.c \
+ C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_LED/lib_led.h \
+ ../Core/Inc/tim.h ../Core/Inc/main.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal.h \
  ../Core/Inc/stm32l5xx_hal_conf.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal_rcc.h \
@@ -56,12 +59,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_gpio.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_dma.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_dmamux.h \
- ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_exti.h \
- ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dfsdm.h \
- ../Core/Inc/i2c.h ../Core/Inc/usart.h ../Core/Inc/octospi.h \
- ../Core/Inc/sai.h ../Core/Inc/spi.h ../Core/Inc/tim.h ../Core/Inc/ucpd.h \
- ../Core/Inc/usb.h ../Core/Inc/gpio.h ../Core/Inc/fmc.h \
- C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_LED/lib_led.h
+ ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_exti.h
+C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_LED/lib_led.h:
+../Core/Inc/tim.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal.h:
 ../Core/Inc/stm32l5xx_hal_conf.h:
@@ -121,17 +121,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_dma.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_dmamux.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_exti.h:
-../Core/Inc/adc.h:
-../Core/Inc/main.h:
-../Core/Inc/dfsdm.h:
-../Core/Inc/i2c.h:
-../Core/Inc/usart.h:
-../Core/Inc/octospi.h:
-../Core/Inc/sai.h:
-../Core/Inc/spi.h:
-../Core/Inc/tim.h:
-../Core/Inc/ucpd.h:
-../Core/Inc/usb.h:
-../Core/Inc/gpio.h:
-../Core/Inc/fmc.h:
-C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_LED/lib_led.h:
