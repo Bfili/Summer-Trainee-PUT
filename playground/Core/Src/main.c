@@ -79,7 +79,7 @@ void PeriphCommonClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	HAL_TIM_PeriodElapsedCallback(&htim4);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -127,7 +127,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  ledTask();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
