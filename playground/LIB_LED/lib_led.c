@@ -4,7 +4,6 @@
 
 static LED_STEPS_E_T s_CurrentStep = STEP_NO_LED_E;
 static _Bool s_TimerElapsed = false;
-static _Bool s_Count = false;
 
 void ledTask(void){
 		switch(s_CurrentStep){
@@ -28,16 +27,12 @@ void ledTask(void){
 						  /* do nothing */
 						  break;
 				  }
-		if(s_Count){
-			s_Count = false;
-		}
 }
 
 
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin){
-	if(GPIO_Pin == USER_BUTTON_Pin){
+	if(USER_BUTTON_Pin == GPIO_Pin){
 		s_CurrentStep = (s_CurrentStep + 1u) % STEP_MAX_E;
-		s_Count = true;
 	}
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
