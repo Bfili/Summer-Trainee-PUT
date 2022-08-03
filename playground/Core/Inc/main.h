@@ -76,6 +76,7 @@ void Error_Handler(void);
 #define LED_GREEN_GPIO_Port GPIOG
 #define USER_BUTTON_Pin GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
+#define USER_BUTTON_EXTI_IRQn EXTI13_IRQn
 #define LED_RED_Pin GPIO_PIN_3
 #define LED_RED_GPIO_Port GPIOD
 #define GYRO_ACC_INT_Pin GPIO_PIN_3
@@ -90,8 +91,8 @@ void Error_Handler(void);
 #define LCD_TE_GPIO_Port GPIOA
 #define SDIO_DETECT_Pin GPIO_PIN_2
 #define SDIO_DETECT_GPIO_Port GPIOF
-#define CTP_INT_Pin GPIO_PIN_1
-#define CTP_INT_GPIO_Port GPIOF
+#define GPIO_Interrupt_Pin_Pin GPIO_PIN_1
+#define GPIO_Interrupt_Pin_GPIO_Port GPIOF
 #define LCD_PWR_ON_Pin GPIO_PIN_0
 #define LCD_PWR_ON_GPIO_Port GPIOH
 #define BLE_INT_Pin GPIO_PIN_6
