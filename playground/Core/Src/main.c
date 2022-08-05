@@ -44,8 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PART_INFO 0x01
-#define READ_CMD_BUFF 0x44
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/

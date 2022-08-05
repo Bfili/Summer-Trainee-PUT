@@ -700,4 +700,6 @@
                             RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD                   \
                             }
 
+void sendInstructions(void);
+
 #endif /* RADIO_CONFIG_H_ */

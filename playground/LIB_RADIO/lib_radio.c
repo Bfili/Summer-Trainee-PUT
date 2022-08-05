@@ -3,29 +3,34 @@
 #include <stdint.h>
 #include <string.h>
 
-static uint8_t s_RadioConfigurationDataArray[] = RADIO_CONFIGURATION_DATA_ARRAY;
-static uint8_t s_SendValue[16] = {0x00};
-static uint16_t s_CheckSum = 0;
-static uint8_t s_CommandsSent = 0;
+#define SEND_VALUE_ARRAY_SIZE 16
+#define RADIO_CONFIGURATION_DATA_ARRAY_SIZE 402
+
+static const uint8_t s_RadioConfigurationDataArray_C[] = RADIO_CONFIGURATION_DATA_ARRAY;
+static uint8_t s_SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
+static uint16_t s_CurrentCommandLengthIndex = 0u;
+static uint8_t s_CommandsSent = 0u;
 static uint8_t* s_LenPointer;
+static HAL_StatusTypeDef s_Status;
 
 
-void sendInstructions(){
-	s_LenPointer = &s_RadioConfigurationDataArray[0];
-	while(402 > s_CheckSum + s_CommandsSent){
-		for(int j = 0;j < 16;j++){
-			s_SendValue[j] = 0;
-		}
+void sendInstructions(void){
+	s_LenPointer = &s_RadioConfigurationDataArray_C[0];
+	while((uint8_t)RADIO_CONFIGURATION_DATA_ARRAY_SIZE > s_CurrentCommandLengthIndex + s_CommandsSent){
+
 		s_CommandsSent++;
 
-		memcpy(&s_SendValue[0], &s_RadioConfigurationDataArray[s_CheckSum + s_CommandsSent], *s_LenPointer*sizeof(*s_LenPointer));
+		memcpy(&s_SendValue[0], &s_RadioConfigurationDataArray_C[s_CurrentCommandLengthIndex + s_CommandsSent], *s_LenPointer*sizeof(*s_LenPointer));
 
 		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-		HAL_SPI_Transmit(&hspi3, s_SendValue, 16, 500);
-		HAL_Delay(100);
+		s_Status = HAL_SPI_Transmit(&hspi3, s_SendValue, *s_LenPointer, 500u);
 		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+		HAL_Delay(100u);
 
-		s_CheckSum = s_CheckSum + *s_LenPointer;
-		s_LenPointer = &s_RadioConfigurationDataArray[s_CheckSum + s_CommandsSent];
+		s_CurrentCommandLengthIndex = s_CurrentCommandLengthIndex + *s_LenPointer;
+		s_LenPointer = &s_RadioConfigurationDataArray_C[s_CurrentCommandLengthIndex + s_CommandsSent];
+		if(HAL_ERROR == s_Status){
+			break;
+		}
 	}
 }
