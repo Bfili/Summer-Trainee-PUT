@@ -72,8 +72,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LCD_BL_PWM_Pin GPIO_PIN_1
 #define LCD_BL_PWM_GPIO_Port GPIOE
-#define LED_GREEN_Pin GPIO_PIN_12
-#define LED_GREEN_GPIO_Port GPIOG
 #define USER_BUTTON_Pin GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
 #define USER_BUTTON_EXTI_IRQn EXTI13_IRQn
@@ -81,8 +79,6 @@ void Error_Handler(void);
 #define LED_RED_GPIO_Port GPIOD
 #define GYRO_ACC_INT_Pin GPIO_PIN_3
 #define GYRO_ACC_INT_GPIO_Port GPIOF
-#define UCPD_DBn_Pin GPIO_PIN_5
-#define UCPD_DBn_GPIO_Port GPIOB
 #define USART1_TX_Pin GPIO_PIN_9
 #define USART1_TX_GPIO_Port GPIOA
 #define USART1_RX_Pin GPIO_PIN_10
@@ -103,16 +99,12 @@ void Error_Handler(void);
 #define BLE_CSN_GPIO_Port GPIOG
 #define LCD_RST_Pin GPIO_PIN_14
 #define LCD_RST_GPIO_Port GPIOF
-#define STMOD_SEL_12_Pin GPIO_PIN_11
-#define STMOD_SEL_12_GPIO_Port GPIOF
 #define AUDIO_RESETN_Pin GPIO_PIN_1
 #define AUDIO_RESETN_GPIO_Port GPIOG
+#define CHIP_SELECT_Pin GPIO_PIN_13
+#define CHIP_SELECT_GPIO_Port GPIOB
 #define UCPD_FLT_Pin GPIO_PIN_14
 #define UCPD_FLT_GPIO_Port GPIOB
-#define VBUS_SENSE_Pin GPIO_PIN_4
-#define VBUS_SENSE_GPIO_Port GPIOA
-#define STMOD_SEL_34_Pin GPIO_PIN_12
-#define STMOD_SEL_34_GPIO_Port GPIOF
 #define CTP_RST_Pin GPIO_PIN_15
 #define CTP_RST_GPIO_Port GPIOF
 /* USER CODE BEGIN Private defines */
