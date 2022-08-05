@@ -47,8 +47,11 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\BochniakF\Desktop\GitHub\playground_FilipBochniak\playground\LIB_LED&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\BochniakF\Desktop\GitHub\playground_FilipBochniak\playground\LIB_BUTTON&quot;"/>
+<<<<<<< HEAD
 									<listOptionValue builtIn="false" value="&quot;C:\Users\BochniakF\Desktop\GitHub\playground_FilipBochniak\playground\RADIO_CONFIG_Si4463&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\BochniakF\Desktop\GitHub\playground_FilipBochniak\playground\LIB_RADIO&quot;"/>
+=======
+>>>>>>> main
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1797718547" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -75,10 +78,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LIB_BUTTON"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LIB_LED"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+<<<<<<< HEAD
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LIB_BUTTON"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LIB_RADIO"/>
+=======
+>>>>>>> main
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -177,4 +185,8 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="refreshScope"/>
+<<<<<<< HEAD
 </cproject>
+=======
+</cproject>
+>>>>>>> main
