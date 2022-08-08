@@ -44,7 +44,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define STMOD_SEL_12_Pin GPIO_PIN_11 /* Set SEL pin states to initiate SPI3 on CN4 */
+#define STMOD_SEL_12_GPIO_Port GPIOF
+#define STMOD_SEL_34_Pin GPIO_PIN_12
+#define STMOD_SEL_34_GPIO_Port GPIOF
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
