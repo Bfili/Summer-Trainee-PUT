@@ -44,10 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define STMOD_SEL_12_Pin GPIO_PIN_11 /* Set SEL pin states to initiate SPI3 on CN4 */
-#define STMOD_SEL_12_GPIO_Port GPIOF
-#define STMOD_SEL_34_Pin GPIO_PIN_12
-#define STMOD_SEL_34_GPIO_Port GPIOF
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -118,7 +115,8 @@ int main(void)
   MX_USB_PCD_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_TIM_Base_Start_IT(&htim4);
+  HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
+  HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END 2 */
 
