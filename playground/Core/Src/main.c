@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "dfsdm.h"
 #include "i2c.h"
 #include "usart.h"
@@ -34,7 +33,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "lib_radio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,7 +67,6 @@ void PeriphCommonClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 
 /* USER CODE END 0 */
 
@@ -102,7 +101,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC1_Init();
   MX_DFSDM1_Init();
   MX_FMC_Init();
   MX_I2C1_Init();
@@ -110,14 +108,15 @@ int main(void)
   MX_USART1_UART_Init();
   MX_OCTOSPI1_Init();
   MX_SAI1_Init();
-  MX_SPI1_Init();
   MX_TIM4_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
   MX_UCPD1_Init();
   MX_USB_PCD_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_TIM_Base_Start_IT(&htim4);
+  HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
+  HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END 2 */
 
@@ -126,8 +125,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  ledTask();
+
     /* USER CODE BEGIN 3 */
+	  sendInstructions();
   }
   /* USER CODE END 3 */
 }
@@ -201,16 +201,15 @@ void PeriphCommonClock_Config(void)
 
   /** Initializes the common periph clock
   */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_SAI1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI1;
   PeriphClkInit.Sai1ClockSelection = RCC_SAI1CLKSOURCE_PLLSAI1;
-  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
   PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSAI1SOURCE_HSI;
   PeriphClkInit.PLLSAI1.PLLSAI1M = 4;
   PeriphClkInit.PLLSAI1.PLLSAI1N = 48;
   PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV17;
   PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
   PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
-  PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_SAI1CLK|RCC_PLLSAI1_ADC1CLK;
+  PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_SAI1CLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
