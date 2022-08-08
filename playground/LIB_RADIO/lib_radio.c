@@ -676,7 +676,8 @@ HAL_StatusTypeDef sendInstructions(void){
 	uint8_t Commands_Sent = 0u;
 
 	LenPointer = &RadioConfigurationDataArray_C[0];
-	while((uint8_t)RADIO_CONFIGURATION_DATA_ARRAY_SIZE > CurrentCommandLengthIndex + Commands_Sent && HAL_OK != Status){
+	while(((uint8_t)RADIO_CONFIGURATION_DATA_ARRAY_SIZE > (CurrentCommandLengthIndex + Commands_Sent))
+	        && (HAL_OK != Status)){
 
 		Commands_Sent++;
 
