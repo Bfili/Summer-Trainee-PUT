@@ -673,7 +673,7 @@
 #define SEND_VALUE_ARRAY_SIZE                   16u
 #define RADIO_CONFIGURATION_DATA_ARRAY_SIZE     402u
 
-HAL_StatusTypeDef sendInstructions(void);
+
 
 
 HAL_StatusTypeDef sendInstructions(void){

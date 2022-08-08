@@ -14,6 +14,8 @@
 #ifndef RADIO_CONFIG_H_
 #define RADIO_CONFIG_H_
 
+#include "stm32l5xx.h"
 
+HAL_StatusTypeDef sendInstructions(void);
 
 #endif /* RADIO_CONFIG_H_ */
