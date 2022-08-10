@@ -16,6 +16,7 @@
 
 #include "stm32l5xx.h"
 
-HAL_StatusTypeDef sendInstructions(void);
+HAL_StatusTypeDef sendConfigurationSettings(void);
+void sendMessage(void);
 
 #endif /* RADIO_CONFIG_H_ */
