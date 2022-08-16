@@ -27,7 +27,7 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_PACKET_LENGTH               0x12
 #define RADIO_CONFIGURATION_DATA_RADIO_STATE_AFTER_POWER_UP        0x03
 #define RADIO_CONFIGURATION_DATA_RADIO_DELAY_CNT_AFTER_RESET       0xF000
-#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD					   {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
+#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD                    {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
 
 
 
@@ -648,7 +648,7 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_PACKET_LENGTH_DEFAULT               0x10
 #define RADIO_CONFIGURATION_DATA_RADIO_STATE_AFTER_POWER_UP_DEFAULT        0x01
 #define RADIO_CONFIGURATION_DATA_RADIO_DELAY_CNT_AFTER_RESET_DEFAULT       0x1000
-#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD_DEFAULT					   {0x42, 0x55, 0x54, 0x54, 0x4F, 0x4E, 0x31} // BUTTON1
+#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD_DEFAULT                    {0x42, 0x55, 0x54, 0x54, 0x4F, 0x4E, 0x31} // BUTTON1
 
 #define RADIO_CONFIGURATION_DATA_RADIO_PATCH_INCLUDED                      0x00
 #define RADIO_CONFIGURATION_DATA_RADIO_PATCH_SIZE                          0x00
@@ -674,29 +674,29 @@ uint8_t ReadValue[SEND_VALUE_ARRAY_SIZE] ={0x00}; //DELETE LATER
 
 
 HAL_StatusTypeDef sendConfigurationSettings(void){
-	const uint8_t RadioConfigurationDataArray_C[RADIO_CONFIGURATION_DATA_ARRAY_SIZE] = RADIO_CONFIGURATION_DATA_ARRAY;
-	uint16_t CurrentCommandLengthIndex = 0u;
-	uint8_t* LenPointer;
-	HAL_StatusTypeDef Status = HAL_OK;
-	uint8_t Commands_Sent = 0u;
+    const uint8_t RadioConfigurationDataArray_C[RADIO_CONFIGURATION_DATA_ARRAY_SIZE] = RADIO_CONFIGURATION_DATA_ARRAY;
+    uint16_t CurrentCommandLengthIndex = 0u;
+    uint8_t* LenPointer;
+    HAL_StatusTypeDef Status = HAL_OK;
+    uint8_t Commands_Sent = 0u;
 
-	LenPointer = &RadioConfigurationDataArray_C[0];
-	while((*LenPointer != 0x00)
-	        && (HAL_OK == Status)){
+    LenPointer = &RadioConfigurationDataArray_C[0];
+    while((*LenPointer != 0x00)
+            && (HAL_OK == Status)){
 
-		Commands_Sent++;
+        Commands_Sent++;
 
-		memcpy(&s_SendValue[0], &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent], *LenPointer*sizeof(uint8_t));
+        memcpy(&s_SendValue[0], &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent], *LenPointer*sizeof(uint8_t));
 
-		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-		Status = HAL_SPI_Transmit(&hspi3, s_SendValue, *LenPointer, 500u);
-		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
-		HAL_Delay(100u);
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+        Status = HAL_SPI_Transmit(&hspi3, s_SendValue, *LenPointer, 500u);
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+        HAL_Delay(100u);
 
-		CurrentCommandLengthIndex = CurrentCommandLengthIndex + *LenPointer;
-		LenPointer = &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent];
-	}
-	return Status;
+        CurrentCommandLengthIndex = CurrentCommandLengthIndex + *LenPointer;
+        LenPointer = &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent];
+    }
+    return Status;
 }
 
 void sendMessage(void){
