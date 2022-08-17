@@ -694,13 +694,13 @@ HAL_StatusTypeDef sendConfigurationSettings(void){
     return Status;
 }
 
-HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser[], uint8_t MessageLength){
+HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
     HAL_StatusTypeDef Status = HAL_OK;
 
     s_SendValue[0u] = WRITE_TX_FIFO;
     memcpy(&s_SendValue[1u], MessageFromUser, MessageLength);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-    Status = HAL_SPI_Transmit(&hspi3, s_SendValue, MessageLength+1, 500u);
+    Status = HAL_SPI_Transmit(&hspi3, s_SendValue, MessageLength+1u, 500u);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
     HAL_Delay(100u);
 
@@ -720,13 +720,13 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser[], uint8_t MessageLength)
 
     s_SendValue[0] = 0x20u; //GET_INT_STATUS
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+    HAL_SPI_Transmit(&hspi3, s_SendValue, 1u, 500u);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
 
-    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+    memset(s_SendValue, 0x00u, SEND_VALUE_ARRAY_SIZE);
     s_SendValue[0] = 0x44; //READ_CMD_BUFFER
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16u, 500u);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
 
     return Status;
