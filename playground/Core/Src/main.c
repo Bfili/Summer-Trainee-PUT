@@ -44,7 +44,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TEST_MSG_ARRAY_SIZE                     18u
+#define TEST_MSG_TO_SEND                        {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -115,11 +116,14 @@ int main(void)
   MX_USB_PCD_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
+  uint8_t TestArrayMessageLength = TEST_MSG_ARRAY_SIZE;
+  uint8_t TestArrayMessage[] = TEST_MSG_TO_SEND;
+
   HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
   HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
   sendConfigurationSettings();
-  sendMessage();
+  sendMessage(TestArrayMessage, TestArrayMessageLength);
   /* USER CODE END 2 */
 
   /* Infinite loop */
