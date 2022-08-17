@@ -27,7 +27,8 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_PACKET_LENGTH               0x12
 #define RADIO_CONFIGURATION_DATA_RADIO_STATE_AFTER_POWER_UP        0x03
 #define RADIO_CONFIGURATION_DATA_RADIO_DELAY_CNT_AFTER_RESET       0xF000
-#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD					   {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
+#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD                    {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
+
 
 
 // CONFIGURATION COMMANDS
@@ -647,7 +648,7 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_PACKET_LENGTH_DEFAULT               0x10
 #define RADIO_CONFIGURATION_DATA_RADIO_STATE_AFTER_POWER_UP_DEFAULT        0x01
 #define RADIO_CONFIGURATION_DATA_RADIO_DELAY_CNT_AFTER_RESET_DEFAULT       0x1000
-#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD_DEFAULT					   {0x42, 0x55, 0x54, 0x54, 0x4F, 0x4E, 0x31} // BUTTON1
+#define RADIO_CONFIGURATION_DATA_CUSTOM_PAYLOAD_DEFAULT                    {0x42, 0x55, 0x54, 0x54, 0x4F, 0x4E, 0x31} // BUTTON1
 
 #define RADIO_CONFIGURATION_DATA_RADIO_PATCH_INCLUDED                      0x00
 #define RADIO_CONFIGURATION_DATA_RADIO_PATCH_SIZE                          0x00
@@ -661,35 +662,163 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_XO_FREQ          RADIO_CONFIGURATION_DATA_RADIO_XO_FREQ_DEFAULT
 #endif
 
-#define SEND_VALUE_ARRAY_SIZE                   16u
+#define SEND_VALUE_ARRAY_SIZE                   19u
+#define TEST_MSG_ARRAY_SIZE                     18u
 #define RADIO_CONFIGURATION_DATA_ARRAY_SIZE     402u
+#define TEST_MSG_TO_SEND                        {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
+#define START_TX                                0x31
+#define WRITE_TX_FIFO                           0x66
+
+static uint8_t s_SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
+uint8_t ReadValue[SEND_VALUE_ARRAY_SIZE] ={0x00}; //DELETE LATER
 
 
+HAL_StatusTypeDef sendConfigurationSettings(void){
+    const uint8_t RadioConfigurationDataArray_C[RADIO_CONFIGURATION_DATA_ARRAY_SIZE] = RADIO_CONFIGURATION_DATA_ARRAY;
+    uint16_t CurrentCommandLengthIndex = 0u;
+    uint8_t* LenPointer;
+    HAL_StatusTypeDef Status = HAL_OK;
+    uint8_t Commands_Sent = 0u;
 
+    LenPointer = &RadioConfigurationDataArray_C[0];
+    while((*LenPointer != 0x00)
+            && (HAL_OK == Status)){
 
-HAL_StatusTypeDef sendInstructions(void){
-	const uint8_t RadioConfigurationDataArray_C[RADIO_CONFIGURATION_DATA_ARRAY_SIZE] = RADIO_CONFIGURATION_DATA_ARRAY;
-	uint8_t SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
-	uint16_t CurrentCommandLengthIndex = 0u;
-	uint8_t* LenPointer;
-	HAL_StatusTypeDef Status;
-	uint8_t Commands_Sent = 0u;
+        Commands_Sent++;
 
-	LenPointer = &RadioConfigurationDataArray_C[0];
-	while(((uint8_t)RADIO_CONFIGURATION_DATA_ARRAY_SIZE > (CurrentCommandLengthIndex + Commands_Sent))
-	        && (HAL_OK != Status)){
+        memcpy(&s_SendValue[0], &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent], *LenPointer*sizeof(uint8_t));
 
-		Commands_Sent++;
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+        Status = HAL_SPI_Transmit(&hspi3, s_SendValue, *LenPointer, 500u);
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+        HAL_Delay(100u);
 
-		memcpy(&SendValue[0], &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent], *LenPointer*sizeof(*LenPointer));
+        CurrentCommandLengthIndex = CurrentCommandLengthIndex + *LenPointer;
+        LenPointer = &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent];
+    }
+    return Status;
+}
 
-		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
-		Status = HAL_SPI_Transmit(&hspi3, SendValue, *LenPointer, 500u);
-		HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
-		HAL_Delay(100u);
+void sendMessage(void){
+    uint8_t Message[TEST_MSG_ARRAY_SIZE] = TEST_MSG_TO_SEND;
 
-		CurrentCommandLengthIndex = CurrentCommandLengthIndex + *LenPointer;
-		LenPointer = &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent];
-	}
-	return Status;
+//    s_SendValue[0] = 0x01;
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 2, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//    memset(s_SendValue, 0x00, 16);
+//    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+//    s_SendValue[0] = 0x15; //FIFO_INFO
+//    s_SendValue[1] = 0x01; //Clear TX FIFO
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 2, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+//    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+    s_SendValue[0] = WRITE_TX_FIFO;
+    memcpy(&s_SendValue[1], Message, TEST_MSG_ARRAY_SIZE);
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi3, s_SendValue, TEST_MSG_ARRAY_SIZE+1, 500u);
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+    HAL_Delay(100u);
+
+//    s_SendValue[0] = 0x11; //SET_PROPERTY
+//    s_SendValue[1] = 0x00;
+//    s_SendValue[2] = 0x01;
+//    s_SendValue[3] = 0x01; //CLOCK_OFF
+//    s_SendValue[4] = 0x00;
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 5, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    s_SendValue[0] = 0x11; //SET_PROPERTY
+//    s_SendValue[1] = 0x00;
+//    s_SendValue[2] = 0x01; //WUT_OFF
+//    s_SendValue[3] = 0x04;
+//    s_SendValue[4] = 0x00;
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 5, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    s_SendValue[0] = 0x20; //GET_INT_STATUS
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    s_SendValue[0] = 0x34; //CHANGE_STATE
+//    s_SendValue[1] = 0x01;
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 2, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+//    s_SendValue[0] = 0x15; //FIFO_INFO
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+//    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+//    s_SendValue[0] = 0x20; //GET_INT_STATUS
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+//    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+    s_SendValue[0] = START_TX;
+    s_SendValue[1] = RADIO_CONFIGURATION_DATA_CHANNEL_NUMBER_DEFAULT;
+    s_SendValue[2] = 0x30; //CONDITION - TXCOMPLETE_STATE - READY [00110000]
+    s_SendValue[3] = 0x00; //
+    s_SendValue[4] = 0x00; //0x12; // TX_LEN - 18 bytes
+    s_SendValue[5] = 0x00;
+    s_SendValue[6] = 0x00;
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi3, s_SendValue, 7, 500u);
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+    HAL_Delay(100u);
+
+//    s_SendValue[0] = 0x34; //CHANGE_STATE
+//    s_SendValue[1] = 0x03;
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 2, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    s_SendValue[0] = 0x33; //REQUEST_DEVICE_STATE
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+//
+//    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+//    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+//    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+    s_SendValue[0] = 0x20; //GET_INT_STATUS
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+
+    memset(s_SendValue, 0x00, SEND_VALUE_ARRAY_SIZE);
+    s_SendValue[0] = 0x44; //READ_CMD_BUFFER
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+    HAL_SPI_TransmitReceive(&hspi3, s_SendValue, ReadValue, 16, 500u);
+    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
 }

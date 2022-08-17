@@ -118,6 +118,8 @@ int main(void)
   HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
   HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
+  sendConfigurationSettings();
+  sendMessage();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -127,7 +129,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  sendInstructions();
   }
   /* USER CODE END 3 */
 }
