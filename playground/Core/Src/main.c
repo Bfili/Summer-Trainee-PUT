@@ -116,14 +116,13 @@ int main(void)
   MX_USB_PCD_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t TestArrayMessageLength = TEST_MSG_ARRAY_SIZE;
-  uint8_t TestArrayMessage[] = TEST_MSG_TO_SEND;
+  uint8_t TestArrayMessage[TEST_MSG_ARRAY_SIZE] = TEST_MSG_TO_SEND;
 
   HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
   HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
   sendConfigurationSettings();
-  sendMessage(TestArrayMessage, TestArrayMessageLength);
+  sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE);
   /* USER CODE END 2 */
 
   /* Infinite loop */

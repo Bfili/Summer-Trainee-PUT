@@ -661,8 +661,8 @@
 
 #define SEND_VALUE_ARRAY_SIZE                   19u
 #define RADIO_CONFIGURATION_DATA_ARRAY_SIZE     402u
-#define START_TX                                0x31
-#define WRITE_TX_FIFO                           0x66
+#define START_TX                                0x31u
+#define WRITE_TX_FIFO                           0x66u
 
 static uint8_t s_SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
 uint8_t ReadValue[SEND_VALUE_ARRAY_SIZE] ={0x00}; //DELETE LATER
@@ -694,31 +694,31 @@ HAL_StatusTypeDef sendConfigurationSettings(void){
     return Status;
 }
 
-HAL_StatusTypeDef sendMessage(uint8_t MessageFromUser[], uint8_t MessageLength){
+HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser[], uint8_t MessageLength){
     HAL_StatusTypeDef Status = HAL_OK;
 
-    s_SendValue[0] = WRITE_TX_FIFO;
-    memcpy(&s_SendValue[1], MessageFromUser, MessageLength);
+    s_SendValue[0u] = WRITE_TX_FIFO;
+    memcpy(&s_SendValue[1u], MessageFromUser, MessageLength);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
     Status = HAL_SPI_Transmit(&hspi3, s_SendValue, MessageLength+1, 500u);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
     HAL_Delay(100u);
 
     s_SendValue[0] = START_TX;
-    s_SendValue[1] = RADIO_CONFIGURATION_DATA_CHANNEL_NUMBER_DEFAULT;
-    s_SendValue[2] = 0x30; //CONDITION - TXCOMPLETE_STATE - READY [00110000]
-    s_SendValue[3] = 0x00;
-    s_SendValue[4] = 0x00;
-    s_SendValue[5] = 0x00;
-    s_SendValue[6] = 0x00;
-    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+    s_SendValue[1u] = RADIO_CONFIGURATION_DATA_CHANNEL_NUMBER_DEFAULT;
+    s_SendValue[2u] = 0x30u; //CONDITION - TXCOMPLETE_STATE - READY [00110000]
+    s_SendValue[3u] = 0x00u;
+    s_SendValue[4u] = 0x00u;
+    s_SendValue[5u] = 0x00u;
+    s_SendValue[6u] = 0x00u;
     if(HAL_OK == Status){
-        HAL_SPI_Transmit(&hspi3, s_SendValue, 7, 500u);
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
+        HAL_SPI_Transmit(&hspi3, s_SendValue, 7u, 500u);
+        HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
+        HAL_Delay(100u);
     }
-    HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
-    HAL_Delay(100u);
 
-    s_SendValue[0] = 0x20; //GET_INT_STATUS
+    s_SendValue[0] = 0x20u; //GET_INT_STATUS
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(&hspi3, s_SendValue, 1, 500u);
     HAL_GPIO_WritePin(CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, GPIO_PIN_SET);
