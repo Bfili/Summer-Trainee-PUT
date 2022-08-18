@@ -56,7 +56,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+SI4463_HANDLER_S_T SI4463;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,8 +121,8 @@ int main(void)
   HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
   HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
-  sendConfigurationSettings();
-  sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE);
+  sendConfigurationSettings(&hspi3, CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, &SI4463);
+  sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE, &SI4463);
   /* USER CODE END 2 */
 
   /* Infinite loop */
