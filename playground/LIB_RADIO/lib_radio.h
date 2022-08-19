@@ -22,6 +22,6 @@ HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDe
 
 HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength);
 
-uint8_t* getRadioIntStatus(void);
+HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse);
 
 #endif /* RADIO_CONFIG_H_ */
