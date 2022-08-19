@@ -728,7 +728,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
     s_SendValue[6u] = 0x00u;
     if(HAL_OK == Status){
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(s_Si4463_S.SPI_Handle, s_SendValue, 7u, 500u);
+        Status = HAL_SPI_Transmit(s_Si4463_S.SPI_Handle, s_SendValue, 7u, 500u);
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
         HAL_Delay(100u);
     }
@@ -748,7 +748,7 @@ HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse){
         memset(s_SendValue, 0x00u, SEND_VALUE_ARRAY_SIZE);
         s_SendValue[0] = 0x44; //READ_CMD_BUFFER
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
-        HAL_SPI_TransmitReceive(s_Si4463_S.SPI_Handle, s_SendValue, s_ReadValue, 16u, 500u);
+        Status = HAL_SPI_TransmitReceive(s_Si4463_S.SPI_Handle, s_SendValue, s_ReadValue, 16u, 500u);
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
     }
 

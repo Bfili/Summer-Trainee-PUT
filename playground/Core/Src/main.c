@@ -126,9 +126,6 @@ int main(void)
   sendConfigurationSettings(&hspi3, CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin);
   sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE);
   getRadioIntStatus(IntArray);
-//  for(int i=0;i<INT_ARRAY_SIZE;i++){
-//      IntArray[i] = IntArrayPtr[i];
-//  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
