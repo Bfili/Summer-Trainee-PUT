@@ -44,6 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define INT_ARRAY_SIZE                          16u
 #define TEST_MSG_ARRAY_SIZE                     18u
 #define TEST_MSG_TO_SEND                        {0x11, 0xF4, 0xF3, 0xF2, 0xF1, 0x34, 0x33, 0x32, 0x31, 0x80, 0x07, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5, 0xC5}
 /* USER CODE END PD */
@@ -56,7 +57,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-SI4463_HANDLER_S_T SI4463;
+uint8_t* IntArrayPtr;
+uint8_t IntArray[INT_ARRAY_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,13 +123,18 @@ int main(void)
   HAL_GPIO_WritePin(STMOD_SEL_12_GPIO_Port, STMOD_SEL_12_Pin, GPIO_PIN_RESET); /* Set SEL pin states to initiate SPI3 on CN4 */
   HAL_GPIO_WritePin(STMOD_SEL_34_GPIO_Port, STMOD_SEL_34_Pin, GPIO_PIN_RESET);
 
-  sendConfigurationSettings(&hspi3, CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin, &SI4463);
-  sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE, &SI4463);
+  sendConfigurationSettings(&hspi3, CHIP_SELECT_GPIO_Port, CHIP_SELECT_Pin);
+  sendMessage(TestArrayMessage, TEST_MSG_ARRAY_SIZE);
+  IntArrayPtr = getRadioIntStatus();
+  for(int i=0;i<INT_ARRAY_SIZE;i++){
+      IntArray[i] = IntArrayPtr[i];
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+   while (1)
   {
     /* USER CODE END WHILE */
 

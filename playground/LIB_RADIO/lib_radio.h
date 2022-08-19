@@ -17,16 +17,11 @@
 #include "stm32l5xx.h"
 #include "spi.h"
 
-typedef struct
-{
-    SPI_HandleTypeDef *SPI_Handle;
-    GPIO_TypeDef *ChipSelectGPIOPort;
-    uint16_t ChipSelectGPIOPin;
-}SI4463_HANDLER_S_T;
-
 HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDef *ChipSelectPort,
-                                            uint16_t ChipSelectPin, SI4463_HANDLER_S_T *TypeDefStruct);
+                                            uint16_t ChipSelectPin);
 
-HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength, SI4463_HANDLER_S_T *TypeDefStruct);
+HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength);
+
+uint8_t* getRadioIntStatus(void);
 
 #endif /* RADIO_CONFIG_H_ */
