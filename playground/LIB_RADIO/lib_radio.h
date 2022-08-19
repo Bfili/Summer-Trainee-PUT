@@ -15,8 +15,13 @@
 #define RADIO_CONFIG_H_
 
 #include "stm32l5xx.h"
+#include "spi.h"
 
-HAL_StatusTypeDef sendConfigurationSettings(void);
+HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDef *ChipSelectPort,
+                                            uint16_t ChipSelectPin);
+
 HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength);
+
+HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse);
 
 #endif /* RADIO_CONFIG_H_ */
