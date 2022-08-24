@@ -59,6 +59,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength);
  *
  * Needs to be interpreted using Si4463 documentation.
  *
+ * \param[out] IntResponse: Pointer to array where interrupt status will be saved
  * \return Status of transmission
  */
 HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse);

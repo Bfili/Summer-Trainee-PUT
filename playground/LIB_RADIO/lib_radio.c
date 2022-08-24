@@ -678,7 +678,9 @@
 * \details \copydetails lib_radio.c
 */
 
-/** \brief Struct containing handles and/or values of hardware setup.
+/**
+ * \brief
+ * Struct containing handles and/or values of hardware setup.
  *
  * Struct containing handles and/or values of hardware setup necessary for establishing communication
  * with radio Si4463 through SPI.
@@ -708,9 +710,7 @@ HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDe
     uint8_t* LenPointer;
     uint8_t Commands_Sent = 0u;
 
-    /*
-     * Writing arguments to struct variables for further usage.
-     */
+    /* writing arguments to struct variables for further usage. */
     s_Si4463_S.SPI_Handle = SPIx;
     s_Si4463_S.ChipSelectGPIOPort = ChipSelectPort;
     s_Si4463_S.ChipSelectGPIOPin = ChipSelectPin;
@@ -751,9 +751,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
 
     HAL_StatusTypeDef Status = HAL_OK;
 
-    /*
-     * load message from user to TX FIFO
-     */
+    /* load message from user to TX FIFO */
     s_SendValue[0u] = WRITE_TX_FIFO;
     memcpy(&s_SendValue[1u], MessageFromUser, MessageLength);
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
@@ -761,9 +759,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
     HAL_Delay(100u);
 
-    /*
-     * load transmission settings and transmit user message through radio
-     */
+    /* load transmission settings and transmit user message through radio */
     s_SendValue[0] = START_TX;
     s_SendValue[1u] = RADIO_CONFIGURATION_DATA_CHANNEL_NUMBER_DEFAULT;
     s_SendValue[2u] = 0x30u; //CONDITION - TXCOMPLETE_STATE - READY [00110000]
@@ -784,17 +780,13 @@ HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse){
 
     HAL_StatusTypeDef Status = HAL_OK;
 
-    /*
-     * send command to load radio command buffer with informations about interrupt statuses
-     */
+    /* send command to load radio command buffer with informations about interrupt statuses */
     s_SendValue[0] = 0x20u; //GET_INT_STATUS
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
     Status = HAL_SPI_Transmit(s_Si4463_S.SPI_Handle, s_SendValue, 1u, 500u);
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
 
-    /*
-     * read radio command buffer
-     */
+    /* read radio command buffer */
     if(HAL_OK == Status){
         /* clear sending array */
         memset(s_SendValue, 0x00u, SEND_VALUE_ARRAY_SIZE);
@@ -804,9 +796,7 @@ HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse){
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
     }
 
-    /*
-     * copy interrupt statuses to array provided by user
-     */
+    /* copy interrupt statuses to array provided by user */
     memcpy(IntResponse, s_ReadValue, 16u);
 
     return Status;
