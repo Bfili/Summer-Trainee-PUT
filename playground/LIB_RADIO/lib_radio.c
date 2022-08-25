@@ -1,3 +1,17 @@
+/*!
+* \file lib_radio.c
+* \brief
+* lib_radio.c implements Si4463 radio functionality for STM32L5
+* \par Membership:
+* Hardware Abstraction
+* \par Dialect:
+* C99
+* \par MCU type:
+* STM32
+*/
+
+/* Includes **********************************************************/
+
 #include "lib_radio.h"
 #include "spi.h"
 #include <stdint.h>
@@ -659,27 +673,35 @@
 #define RADIO_CONFIGURATION_DATA_RADIO_XO_FREQ          RADIO_CONFIGURATION_DATA_RADIO_XO_FREQ_DEFAULT
 #endif
 
+/** @addtogroup HAL_Si4463
+* @{ \brief This is the Si4463 module
+* \details \copydetails lib_radio.c
+*/
+
+/**
+ * \brief
+ * Struct containing handles and/or values of hardware setup.
+ *
+ * Struct containing handles and/or values of hardware setup necessary for establishing communication
+ * with radio Si4463 through SPI.
+ */
 typedef struct{
     SPI_HandleTypeDef *SPI_Handle;
     GPIO_TypeDef *ChipSelectGPIOPort;
     uint16_t ChipSelectGPIOPin;
 }SI4463_HANDLER_S_T;
 
-#define SEND_VALUE_ARRAY_SIZE                   19u
-#define RADIO_CONFIGURATION_DATA_ARRAY_SIZE     402u
-#define START_TX                                0x31u
-#define WRITE_TX_FIFO                           0x66u
+#define SEND_VALUE_ARRAY_SIZE                   19u             /**< Size of array used for sending configuration/messages to radio. */
+#define RADIO_CONFIGURATION_DATA_ARRAY_SIZE     402u            /**< Size of array with configuration. */
+#define START_TX                                0x31u           /**< Byte command for starting TX (from Si4463 documentation). */
+#define WRITE_TX_FIFO                           0x66u           /**< Byte command for writing data to TX FIFO (from Si4463 documentation). */
 
-static uint8_t s_SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
-static uint8_t s_ReadValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};
-static SI4463_HANDLER_S_T s_Si4463_S;
+static uint8_t s_SendValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};    /* Array used as buffer for sending data */
+static uint8_t s_ReadValue[SEND_VALUE_ARRAY_SIZE] = {0x00u};    /* Array used as buffer for receiving data */
+static SI4463_HANDLER_S_T s_Si4463_S;                           /* Instance of SI4463_HANDLER_S_T */
 
 HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDef *ChipSelectPort,
         uint16_t ChipSelectPin){
-
-    s_Si4463_S.SPI_Handle = SPIx;
-    s_Si4463_S.ChipSelectGPIOPort = ChipSelectPort;
-    s_Si4463_S.ChipSelectGPIOPin = ChipSelectPin;
 
     HAL_StatusTypeDef Status = HAL_OK;
 
@@ -688,13 +710,30 @@ HAL_StatusTypeDef sendConfigurationSettings(SPI_HandleTypeDef *SPIx, GPIO_TypeDe
     uint8_t* LenPointer;
     uint8_t Commands_Sent = 0u;
 
+    /* writing arguments to struct variables for further usage. */
+    s_Si4463_S.SPI_Handle = SPIx;
+    s_Si4463_S.ChipSelectGPIOPort = ChipSelectPort;
+    s_Si4463_S.ChipSelectGPIOPin = ChipSelectPin;
+
+    /* set pointer to the beginning of configuration data array*/
     LenPointer = &RadioConfigurationDataArray_C[0];
+
+    /*
+     * send data configuration to Si4463, using SPI, as long as:
+     * - iterator doesn't exceed configuration data array size
+     * - LenPointer is not 0x00 (last index in defined RADIO_CONFIGURATION_DATA_ARRAY, signalizing end of array)
+     * - the previous transmission was successful
+     */
     while((RADIO_CONFIGURATION_DATA_ARRAY_SIZE > (CurrentCommandLengthIndex + Commands_Sent))
             && (*LenPointer != 0x00)
             && (HAL_OK == Status)){
 
         Commands_Sent++;
 
+        /*
+         * copy data from configuration data array to sending buffer (size of each configuration command is
+         * specified in RADIO_CONFIGURATION_DATA_ARRAY as first byte in every row)
+         */
         memcpy(&s_SendValue[0], &RadioConfigurationDataArray_C[CurrentCommandLengthIndex + Commands_Sent], *LenPointer*sizeof(uint8_t));
 
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
@@ -712,6 +751,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
 
     HAL_StatusTypeDef Status = HAL_OK;
 
+    /* load message from user to TX FIFO */
     s_SendValue[0u] = WRITE_TX_FIFO;
     memcpy(&s_SendValue[1u], MessageFromUser, MessageLength);
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
@@ -719,6 +759,7 @@ HAL_StatusTypeDef sendMessage(uint8_t* MessageFromUser, uint8_t MessageLength){
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
     HAL_Delay(100u);
 
+    /* load transmission settings and transmit user message through radio */
     s_SendValue[0] = START_TX;
     s_SendValue[1u] = RADIO_CONFIGURATION_DATA_CHANNEL_NUMBER_DEFAULT;
     s_SendValue[2u] = 0x30u; //CONDITION - TXCOMPLETE_STATE - READY [00110000]
@@ -739,12 +780,15 @@ HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse){
 
     HAL_StatusTypeDef Status = HAL_OK;
 
+    /* send command to load radio command buffer with informations about interrupt statuses */
     s_SendValue[0] = 0x20u; //GET_INT_STATUS
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
     Status = HAL_SPI_Transmit(s_Si4463_S.SPI_Handle, s_SendValue, 1u, 500u);
     HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
 
+    /* read radio command buffer */
     if(HAL_OK == Status){
+        /* clear sending array */
         memset(s_SendValue, 0x00u, SEND_VALUE_ARRAY_SIZE);
         s_SendValue[0] = 0x44; //READ_CMD_BUFFER
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_RESET);
@@ -752,7 +796,11 @@ HAL_StatusTypeDef getRadioIntStatus(uint8_t* IntResponse){
         HAL_GPIO_WritePin(s_Si4463_S.ChipSelectGPIOPort, s_Si4463_S.ChipSelectGPIOPin, GPIO_PIN_SET);
     }
 
+    /* copy interrupt statuses to array provided by user */
     memcpy(IntResponse, s_ReadValue, 16u);
 
     return Status;
 }
+/**
+* @}
+*/
