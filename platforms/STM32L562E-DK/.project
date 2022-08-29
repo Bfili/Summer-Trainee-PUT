@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>playground</name>
+	<name>STM32L562E-DK</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -35,7 +35,7 @@
 		<link>
 			<name>LIB_RADIO</name>
 			<type>2</type>
-			<location>C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/playground/LIB_RADIO</location>
+			<location>C:/Users/BochniakF/Desktop/GitHub/playground_FilipBochniak/code/LIB_RADIO</location>
 		</link>
 	</linkedResources>
 </projectDescription>
